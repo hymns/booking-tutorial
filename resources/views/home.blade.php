@@ -14,6 +14,7 @@
                         </div>
                     @endif
 
+                    @include('shared.message')
                     {{ __('You are logged in!') }}
                 </div>
             </div>

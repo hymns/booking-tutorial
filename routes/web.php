@@ -33,12 +33,12 @@ Route::middleware('auth')->group(function () {
     //     Route::post('/bookings/{booking}/reject', [BookingController::class, 'reject'])->name('bookings.reject');
     // });
 
-    // Route::middleware('role:admin')->group(function () {
+    Route::middleware('role:Admin')->group(function () {
         Route::resource('types', TypeController::class);
         Route::resource('items', ItemController::class);
         Route::resource('emails', EmailController::class);
         Route::resource('users', UserController::class);
-    // });
+    });
 
     Route::resource('bookings', BookingController::class);
 
