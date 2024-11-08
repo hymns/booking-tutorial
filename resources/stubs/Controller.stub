@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\{{modelName}}Request;
+use App\Models\{{modelName}};
+
+class {{modelName}}Controller extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        ${{modelNamePluralLowerCase}} = {{modelName}}::latest()->get();
+
+        return response()->json(${{modelNamePluralLowerCase}});
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  App\Http\Requests\{{modelName}}Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store({{modelName}}Request $request)
+    {
+        $validated = $request->validated();
+        ${{modelNameSingularLowerCase}} = {{modelName}}::create($validated);
+
+        return response()->json(${{modelNameSingularLowerCase}}, 201);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        ${{modelNameSingularLowerCase}} = {{modelName}}::findOrFail($id);
+
+        return response()->json(${{modelNameSingularLowerCase}});
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  App\Http\Requests\{{modelName}}Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update({{modelName}}Request $request, $id)
+    {
+        $validated = $request->validated();
+        ${{modelNameSingularLowerCase}} = {{modelName}}::findOrFail($id);        
+        ${{modelNameSingularLowerCase}}->update($validated);
+
+        return response()->json(${{modelNameSingularLowerCase}}, 200);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        ${{modelNameSingularLowerCase}} = {{modelName}}::findOrFail($id);
+        ${{modelNameSingularLowerCase}}->delete();
+
+        return response()->json(null, 204);
+    }
+}
