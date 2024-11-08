@@ -18,6 +18,7 @@
                                     <th scope="col">Name</th>
                                     <th scope="col">Email</th>
                                     <th scope="col">Department</th>
+                                    <th scope="col" class="text-center">Bookings</th>
                                     <th scope="col" class="text-center">Action</th>
                                 </tr>
                             </thead>
@@ -29,6 +30,7 @@
                                         <td>{{ $row->name }}</td>
                                         <td>{{ $row->email }}</td>
                                         <td>{{ $row->department }}</td>
+                                        <td class="text-center">{{ $row->bookings_count }}</td>
                                         <td class="text-center">
                                             <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">

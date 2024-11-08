@@ -5,10 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Booking\StoreRequest;
 use App\Http\Requests\Booking\UpdateRequest;
 use Illuminate\Database\QueryException;
-use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\Item;
-use Carbon\Carbon;
 
 class BookingController extends Controller
 {

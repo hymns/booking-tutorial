@@ -18,7 +18,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::paginate(10);
+        $users = User::withCount('bookings')->paginate(10);
+
         return view('users.list', compact('users'));
     }
 
