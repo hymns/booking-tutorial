@@ -27,11 +27,10 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth')->group(function () {
-    // Route::middleware('role:manager')->group(function () {
-    //     Route::post('/bookings/requests', [BookingController::class, 'requests'])->name('bookings.requests');
-    //     Route::post('/bookings/{booking}/approve', [BookingController::class, 'approve'])->name('bookings.approve');
-    //     Route::post('/bookings/{booking}/reject', [BookingController::class, 'reject'])->name('bookings.reject');
-    // });
+    Route::middleware('role:Manager')->group(function () {
+        Route::post('/bookings/{booking}/approve', [BookingController::class, 'approve'])->name('bookings.approve');
+        Route::post('/bookings/{booking}/reject', [BookingController::class, 'reject'])->name('bookings.reject');
+    });
 
     Route::middleware('role:Admin')->group(function () {
         Route::resource('types', TypeController::class);

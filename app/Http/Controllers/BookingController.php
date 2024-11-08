@@ -6,7 +6,9 @@ use App\Http\Requests\Booking\StoreRequest;
 use App\Http\Requests\Booking\UpdateRequest;
 use Illuminate\Database\QueryException;
 use App\Models\Booking;
+use App\Models\Email;
 use App\Models\Item;
+use Illuminate\Support\Facades\Mail;
 
 class BookingController extends Controller
 {
@@ -17,7 +19,28 @@ class BookingController extends Controller
      */
     public function index()
     {
-        $bookings = Booking::with('user', 'item')->paginate();
+        $user = auth()->user();
+
+        // admin
+        if ($user->role->name == 'Admin') {
+            $bookings = Booking::with('user', 'item')
+                               ->paginate();            
+        } 
+        
+        // user manager
+        elseif ($user->role->name == 'Manager') {
+            $bookings = Booking::with('user', 'item')
+                               ->where('status', 'pending')
+                               ->paginate();
+        }
+
+        // user staff
+        else {
+            $bookings = Booking::with('user', 'item')
+                               ->where('user_id', auth()->id())
+                               ->paginate();
+        }
+
         return view('bookings.list', compact('bookings'));
     }
 
@@ -59,12 +82,23 @@ class BookingController extends Controller
                 return redirect()->back()->with('error', 'This item is already booked for the requested time.');
             }
 
-            Booking::create([
+            $booking = Booking::create([
                 'user_id' => auth()->id(),
                 'item_id' => $request->item_id,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date
             ]);
+            
+            $booking->load('user');
+
+            // get email template
+            $email = Email::where('name', 'Pending')->first();
+
+            // send email
+            Mail::raw($email->body, function ($mail) use ($booking, $email) {
+                $mail->to($booking->user->email)
+                     ->subject($email->subject);
+            });    
 
             return redirect()->route('bookings.index')->with('success', 'Booking requested successfully.');
         } catch (QueryException $e) {
@@ -78,9 +112,11 @@ class BookingController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Booking $booking)
     {
-        //
+        $booking->load('user', 'item', 'item.type');
+        
+        return view('bookings.show', compact('booking'));
     }
 
     /**
@@ -164,6 +200,14 @@ class BookingController extends Controller
         $booking->status = 'approved';
         $booking->save();
 
+        // get email template
+        $email = Email::where('name', 'Approved')->first();
+
+        // send email
+        Mail::raw($email->body, function ($mail) use ($booking, $email) {
+            $mail->to($booking->user->email)->subject($email->subject);
+        });    
+
         return redirect()->back()->with('success', 'Booking approved.');
     }
 
@@ -178,6 +222,14 @@ class BookingController extends Controller
         $booking = Booking::findOrFail($bookingId);
         $booking->status = 'rejected';
         $booking->save();
+
+        // get email template
+        $email = Email::where('name', 'Rejected')->first();
+
+        // send email
+        Mail::raw($email->body, function ($mail) use ($booking, $email) {
+            $mail->to($booking->user->email)->subject($email->subject);
+        });    
 
         return redirect()->back()->with('success', 'Booking rejected.');
     }
